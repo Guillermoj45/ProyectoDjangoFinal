@@ -45,6 +45,30 @@ def edite_note(request, id):
     return render(request, 'notes/note_edit.html', {'form': form})
 
 def list_notes(request):
+    if request.method == 'POST':
+        fecha = ''
+        try:
+            fecha = request.POST.get('date')
+        except:
+            pass
+
+        estado = ''
+        try:
+            estado = request.POST.get('estado')
+        except:
+            pass
+
+        if fecha != '' and estado != '':
+            notes = Note.objects.filter(created_at=fecha, state=estado)
+        elif fecha != '':
+            notes = Note.objects.filter(created_at__date=fecha)
+        elif estado != '':
+            notes = Note.objects.filter(state=estado)
+        else:
+            notes = Note.objects.all()
+
+        return render(request, 'notes/note_list.html', {'notes': notes})
+
     notes = Note.objects.all()
     return render(request, 'notes/note_list.html', {'notes': notes})
 
